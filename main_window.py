@@ -6,12 +6,11 @@ import os
 from dashboard_page import DashboardPage
 from substancias import SubstancesPage
 from projects_page import ProjectsPage
-
+from calculadora import CalculadoraQuimicaPage
 from EngineeringToolsPage import EngineeringToolsPage
 from equipamentos import ControleEquipamentos
 from ControleEstoque import ControleEstoque
-
-from calculadora_page import CalculadoraQuimicaPage
+from tabelas import TabelaQuimica
 
 
 class MainWindow(QMainWindow):
@@ -43,12 +42,11 @@ class MainWindow(QMainWindow):
         self.dashboard = DashboardPage()
         self.substancias = SubstancesPage()  # Corrigido
         self.projects = ProjectsPage()
-    
+        self.calculadora=CalculadoraQuimicaPage()
         self.EngineeringToolsPage=EngineeringToolsPage()
         self.ControleEquipamentos=ControleEquipamentos()
         self.ControleEstoque=ControleEstoque()
-
-        self.calculadora = CalculadoraQuimicaPage()
+        self.tabelas=TabelaQuimica()
 
         # Adicionando as páginas ao QStackedWidget
         self.stacked_widget.addWidget(self.dashboard)
@@ -58,6 +56,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.ControleEquipamentos)
         self.stacked_widget.addWidget(self.ControleEstoque)
         self.stacked_widget.addWidget(self.calculadora)
+        self.stacked_widget.addWidget(self.tabelas)
 
         # Botões do menu
         buttons = [
@@ -67,7 +66,8 @@ class MainWindow(QMainWindow):
             ("IA LAB/PERIÓDICOS/BANCOS DE DADOS",self.EngineeringToolsPage),
             ("Controle de equipamentos",self.ControleEquipamentos),
             ("Controle do estoque",self.ControleEstoque),
-            ("Calculadora", self.calculadora),
+            ("Calculadora química",self.calculadora),
+            ("Tabelas periódica/solubilidade",self.tabelas),
         ]
 
         # Adicionando os botões ao menu
