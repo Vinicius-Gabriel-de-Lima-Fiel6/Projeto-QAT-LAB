@@ -1,193 +1,352 @@
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QComboBox,
-    QLineEdit, QPushButton, QMessageBox, QFormLayout, QFrame
+    QLineEdit, QPushButton, QMessageBox, QFormLayout, QHBoxLayout
 )
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
-import math
+
 
 class CalculadoraQuimicaPage(QWidget):
     def __init__(self):
         super().__init__()
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #1e1e1e;
-                color: #ffffff;
-                font-family: Arial;
-                font-size: 14px;
-            }
-            QComboBox, QLineEdit {
-                background-color: #2e2e2e;
-                color: #ffffff;
-                padding: 6px;
-                border-radius: 6px;
-                border: 1px solid #555;
-            }
-            QPushButton {
-                background-color: #007acc;
-                color: white;
-                padding: 8px 20px;
-                font-weight: bold;
-                border-radius: 6px;
-            }
-            QPushButton:hover {
-                background-color: #005f99;
-            }
-        """)
+        self.setStyleSheet("background-color: #f0f0f0;")
 
-        
         layout_principal = QVBoxLayout()
         layout_principal.setAlignment(Qt.AlignmentFlag.AlignTop)
-        layout_principal.setSpacing(25)
-        layout_principal.setContentsMargins(30, 20, 30, 20)
 
-        self.title = QLabel("Calculadora")
-        self.title.setStyleSheet("font-size: 20px; font-weight: bold; background-color: transparent; color: #00FFFF;")
-        layout_principal.addWidget(self.title)
+        # ====== 1. BLOCO: Cálculos Químicos ======
+        bloco1 = self.blocos_titulo("🧪 Calculadora Química")
+        self.combo_quimica = self.novo_combo([
+    "Molaridade", "Molalidade", "Normalidade", "% em massa", "% em volume", "% m/v",
+    "PPM", "PPB", "Fração molar", "Fração em massa", "Fração em volume",
+    "Densidade", "Massa molar", "Concentração comum", "Concentração em mol/L",
+    "Concentração equivalente", "Título em massa", "Título em volume",
+    "Massa específica", "Volume molar (CNTP)", "Pressão osmótica", "pH", "pOH",
+    "Ka", "Kb", "Kw", "Equivalente grama", "Peso equivalente", "Grau de ionização",
+    "Número de oxidação", "Constante de dissociação", "Capacidade térmica",
+    "Calor sensível", "Calor latente", "Solubilidade", "Rendimento da reação",
+    "Pureza", "Diluição (C1V1 = C2V2)", "Velocidade da reação",
+    "Número de Avogadro"
+            
+        ])
+        self.combo_quimica.currentIndexChanged.connect(self.atualizar_campos_quimica)
+        bloco1.addWidget(self.combo_quimica, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-        self.blocos = [
-            ("🧪 Cálculos Químicos", self.atualizar_campos_quimica, self.calcular_quimica, "combo_quimica", "form_quimica", "resultado_quimica", [
-                "Molaridade", "Molalidade", "Normalidade", "% em massa", "% em volume", "% m/v",
-                "PPM", "PPB", "Fração molar", "Fração em massa", "Fração em volume",
-                "Densidade", "Massa molar", "Concentração comum", "Concentração em mol/L",
-                "Concentração equivalente", "Título em massa", "Título em volume",
-                "Massa específica", "Volume molar (CNTP)", "Pressão osmótica", "pH", "pOH",
-                "Ka", "Kb", "Kw", "Equivalente grama", "Peso equivalente", "Grau de ionização",
-                "Número de oxidação", "Constante de dissociação", "Capacidade térmica",
-                "Calor sensível", "Calor latente", "Solubilidade", "Rendimento da reação",
-                "Pureza", "Diluição (C1V1 = C2V2)", "Velocidade da reação",
-                "Número de Avogadro"
-            ]),
-            ("🔁 Conversões SI", self.atualizar_campos_conv, self.calcular_conv, "combo_convert", "form_conv", "resultado_conv", [
-                "g para kg", "kg para g", "mg para g", "g para mg",
-                "L para mL", "mL para L", "cm³ para mL", "mL para cm³",
-                "m/s para km/h", "km/h para m/s", "atm para mmHg", "mmHg para atm",
-                "atm para Pa", "Pa para atm", "J para cal", "cal para J",
-                "°C para K", "K para °C", "cm² para m²", "m² para cm²"
-            ]),
-            ("📘 Cálculos Avançados", self.atualizar_campos_extra, self.calcular_extra, "combo_extra", "form_extra", "resultado_extra", [
-                "Energia livre de Gibbs", "Lei dos gases ideais", "Volume em gases ideais",
-                "Equilíbrio químico (Kp)", "Equilíbrio químico (Kc)", "Lei de Hess",
-                "Velocidade média (m/s)", "Força (2ª lei de Newton)", "Trabalho de uma força",
-                "Ponto de fusão estimado (°C)", "Ponto de ebulição estimado (°C)",
-                "Entalpia de fusão (kJ/mol)", "Entalpia de vaporização (kJ/mol)",
-                "Entropia (J/mol·K)", "Energia de ligação (kJ/mol)", "Ponto crítico estimado",
-                "Temperatura de autoignição", "Índice de refração estimado",
-                "Condutividade elétrica (S/m)"
-            ])
-        ]
+        self.form_quimica = QFormLayout()
+        bloco1.addLayout(self.form_quimica)
 
-        for titulo, atualiza, calcula, combo_attr, form_attr, resultado_attr, opcoes in self.blocos:
-            bloco = QFrame()
-            bloco.setStyleSheet("QFrame { background-color: #2b2b3d; border-radius: 12px; }")
-            bloco_layout = QVBoxLayout(bloco)
-            bloco_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-            bloco_layout.setContentsMargins(20, 20, 20, 20)
-            bloco_layout.setSpacing(15)
+        self.btn_quimica = self.novo_botao("Calcular", self.calcular_quimica)
+        bloco1.addWidget(self.btn_quimica, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-            label = QLabel(titulo)
-            label.setFont(QFont("Arial", 16, QFont.Weight.Bold))
-            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            bloco_layout.addWidget(label)
+        self.resultado_quimica = self.novo_resultado()
+        bloco1.addWidget(self.resultado_quimica)
 
-            combo = QComboBox()
-            combo.addItems(opcoes)
-            combo.setFixedWidth(250)
-            bloco_layout.addWidget(combo, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout_principal.addLayout(bloco1)
 
-            form = QFormLayout()
-            bloco_layout.addLayout(form)
+        # ====== 2. BLOCO: Conversões SI ======
+        bloco2 = self.blocos_titulo("🔁 Conversões de Unidades (SI)")
+        self.combo_convert = self.novo_combo([
+    "Massa (g ↔ kg)",
+    "Comprimento (m ↔ cm ↔ mm)",
+    "Volume (L ↔ mL ↔ cm³)",
+    "Tempo (h ↔ min ↔ s)",
+    "Temperatura (°C ↔ K)",
+    "Área (m² ↔ cm²)",
+    "Velocidade (m/s ↔ km/h)",
+    "Pressão (atm ↔ Pa ↔ mmHg)",
+    "Densidade (g/mL ↔ kg/m³)"
+            
+        ])
+        self.combo_convert.currentIndexChanged.connect(self.atualizar_campos_conv)
+        bloco2.addWidget(self.combo_convert, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-            btn = QPushButton("Calcular" if "quimica" in combo_attr else "Converter")
-            btn.clicked.connect(calcula)
-            bloco_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.form_conv = QFormLayout()
+        bloco2.addLayout(self.form_conv)
 
-            resultado = QLabel("Resultado:")
-            resultado.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            bloco_layout.addWidget(resultado)
+        self.btn_conv = self.novo_botao("Converter", self.calcular_conv)
+        bloco2.addWidget(self.btn_conv, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-            setattr(self, combo_attr, combo)
-            setattr(self, form_attr, form)
-            setattr(self, resultado_attr, resultado)
+        self.resultado_conv = self.novo_resultado()
+        bloco2.addWidget(self.resultado_conv)
 
-            combo.currentIndexChanged.connect(atualiza)
-            layout_principal.addWidget(bloco)
+        layout_principal.addLayout(bloco2)
 
+        # ====== 3. BLOCO: Cálculos Avançados ======
+        bloco3 = self.blocos_titulo("📘 Cálculos Avançados")
+        self.combo_extra = self.novo_combo([
+            "Ponto de fusão estimado (°C)",
+            "Ponto de ebulição estimado (°C)",
+            "Entalpia de fusão (kJ/mol)",
+            "Entalpia de vaporização (kJ/mol)",
+            "Entropia (J/mol·K)",
+            "Energia de ligação (kJ/mol)",
+            "Ponto crítico estimado",
+            "Temperatura de autoignição",
+            "Índice de refração estimado",
+            "Condutividade elétrica (S/m)",
+            "Energia livre de Gibbs"
+            "Lei dos gases ideais",
+            "Volume em gases ideais",
+            "Equilíbrio químico (Kp)",
+            "Equilíbrio químico (Kc)",
+            "Lei de Hess",
+            "Velocidade média (m/s)",
+            "Força (2ª lei de Newton)",
+            "Trabalho de uma força"
+            
+        ])
+        self.combo_extra.currentIndexChanged.connect(self.atualizar_campos_extra)
+        bloco3.addWidget(self.combo_extra, alignment=Qt.AlignmentFlag.AlignHCenter)
+
+        self.form_extra = QFormLayout()
+        bloco3.addLayout(self.form_extra)
+
+        self.btn_extra = self.novo_botao("Calcular", self.calcular_extra)
+        bloco3.addWidget(self.btn_extra, alignment=Qt.AlignmentFlag.AlignHCenter)
+
+        self.resultado_extra = self.novo_resultado()
+        bloco3.addWidget(self.resultado_extra)
+
+        layout_principal.addLayout(bloco3)
+
+        # Finalizando layout
         self.setLayout(layout_principal)
         self.atualizar_campos_quimica()
         self.atualizar_campos_conv()
         self.atualizar_campos_extra()
 
-    def atualizar_formulario(self, layout, campos):
-        parent = layout.parentWidget()
-        parent.entradas = []
-        while layout.rowCount():
-            layout.removeRow(0)
-        for campo in campos:
-            entrada = QLineEdit()
-            entrada.setPlaceholderText(campo)
-            layout.addRow(campo, entrada)
-            parent.entradas.append(entrada)
+    # ======= Componentes de Interface ========
+    def blocos_titulo(self, texto):
+        layout = QVBoxLayout()
+        label = QLabel(texto)
+        label.setFont(QFont("Arial", 16, QFont.Weight.Bold))
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(label)
+        return layout
+
+    def novo_combo(self, opcoes):
+        combo = QComboBox()
+        combo.addItems(opcoes)
+        combo.setFixedWidth(250)
+        combo.setStyleSheet("padding: 6px; font-size: 14px;")
+        return combo
+
+    def novo_botao(self, texto, funcao):
+        botao = QPushButton(texto)
+        botao.clicked.connect(funcao)
+        botao.setStyleSheet("""
+            QPushButton {
+                background-color: #007ACC;
+                color: white;
+                padding: 8px 20px;
+                font-weight: bold;
+                font-size: 14px;
+                border-radius: 6px;
+            }
+            QPushButton:hover {
+                background-color: #005F99;
+            }
+        """)
+        return botao
+
+    def novo_resultado(self):
+        label = QLabel("Resultado: ")
+        label.setFont(QFont("Arial", 12))
+        label.setStyleSheet("padding-top: 15px; color: #333333;")
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        return label
 
     def atualizar_campos_quimica(self):
         campos = {
-            "Molaridade": ["Mol", "L"],
-            "Molalidade": ["Mol", "kg"],
-            "Densidade": ["g", "mL"],
-            "pH": ["[H⁺]"],
-            "Diluição (C1V1 = C2V2)": ["C1", "V1", "C2 ou V2"]
+    "Molaridade": ["Moles do soluto (mol)", "Volume da solução (L)"],
+    "Molalidade": ["Moles do soluto (mol)", "Massa do solvente (kg)"],
+    "Normalidade": ["Equivalentes do soluto", "Volume da solução (L)"],
+    "% em massa": ["Massa do soluto (g)", "Massa da solução (g)"],
+    "% em volume": ["Volume do soluto (mL)", "Volume da solução (mL)"],
+    "% m/v": ["Massa do soluto (g)", "Volume da solução (mL)"],
+    "PPM": ["Massa do soluto (mg)", "Massa da solução (kg)"],
+    "PPB": ["Massa do soluto (µg)", "Massa da solução (kg)"],
+    "Fração molar": ["Moles do componente A", "Moles totais da mistura"],
+    "Fração em massa": ["Massa do componente A (g)", "Massa total da mistura (g)"],
+    "Fração em volume": ["Volume do componente A (mL)", "Volume total da mistura (mL)"],
+    "Densidade": ["Massa (g)", "Volume (mL)"],
+    "Massa molar": ["Massa (g)", "Quantidade de substância (mol)"],
+    "Concentração comum": ["Massa do soluto (g)", "Volume da solução (L)"],
+    "Concentração em mol/L": ["Quantidade de matéria (mol)", "Volume da solução (L)"],
+    "Concentração equivalente": ["Número de equivalentes", "Volume (L)"],
+    "Título em massa": ["Massa do soluto (g)", "Massa da solução (g)"],
+    "Título em volume": ["Volume do soluto (mL)", "Volume da solução (mL)"],
+    "Massa específica": ["Massa (g)", "Volume (cm³)"],
+    "Volume molar (CNTP)": ["Quantidade de matéria (mol)"],
+    "Pressão osmótica": ["Molaridade (mol/L)", "Temperatura (K)"],
+    "pH": ["Concentração de H⁺ (mol/L)"],
+    "pOH": ["Concentração de OH⁻ (mol/L)"],
+    "Ka": ["[H⁺]", "[A⁻]", "[HA]"],
+    "Kb": ["[OH⁻]", "[B⁺]", "[BOH]"],
+    "Kw": ["[H⁺]", "[OH⁻]"],
+    "Equivalente grama": ["Massa (g)", "Peso equivalente (g/eq)"],
+    "Peso equivalente": ["Massa molar (g/mol)", "Número de elétrons ou íons trocados"],
+    "Grau de ionização": ["Concentração ionizada", "Concentração inicial"],
+    "Número de oxidação": ["Número total de elétrons ganhos ou perdidos", "Número de átomos"],
+    "Constante de dissociação": ["Concentração dos produtos", "Concentração dos reagentes"],
+    "Capacidade térmica": ["Calor (J)", "Variação de temperatura (°C)"],
+    "Calor sensível": ["Massa (g)", "Capacidade térmica (J/g°C)", "ΔT (°C)"],
+    "Calor latente": ["Massa (g)", "Calor latente (J/g)"],
+    "Solubilidade": ["Massa dissolvida (g)", "Volume do solvente (L)"],
+    "Rendimento da reação": ["Massa experimental (g)", "Massa teórica (g)"],
+    "Pureza": ["Massa da substância pura (g)", "Massa total da amostra (g)"],
+    "Diluição (C1V1 = C2V2)": ["C1", "V1", "C2 ou V2 (preencher 3 de 4 valores)"],
+    "Velocidade da reação": ["Variação da concentração (mol/L)", "Variação do tempo (s)"],
+    "Número de Avogadro": ["Número de partículas", "Número de mols"]
+            
         }
-        chave = self.combo_quimica.currentText()
-        self.atualizar_formulario(self.form_quimica, campos.get(chave, ["Valor 1", "Valor 2"]))
+        self.atualizar_formulario(self.form_quimica, campos[self.combo_quimica.currentText()])
 
     def atualizar_campos_conv(self):
         self.atualizar_formulario(self.form_conv, ["Valor"])
 
     def atualizar_campos_extra(self):
         campos = {
-            "Energia livre de Gibbs": ["ΔH", "T", "ΔS"],
-            "Volume em gases ideais": ["n", "R", "T", "P"]
-        }
-        chave = self.combo_extra.currentText()
-        self.atualizar_formulario(self.form_extra, campos.get(chave, ["Valor 1", "Valor 2"]))
+            "Energia livre de Gibbs": ["ΔH (kJ/mol)", "T (K)", "ΔS (J/mol·K)"],
+            "Lei dos gases ideais": ["n (mol)", "R (0.0821)", "T (K)", "P (atm)", "V (L)"],
+            "Volume em gases ideais": ["n (mol)", "R", "T (K)", "P (atm)"],
+            "Equilíbrio químico (Kp)": ["Pressão produtos", "Pressão reagentes"],
+            "Equilíbrio químico (Kc)": ["[produtos]", "[reagentes]"],
+            "Lei de Hess": ["ΔH1", "ΔH2", "ΔH3"],
+            "Velocidade média (m/s)": ["d (m)", "Δt (s)"],
+            "Força (2ª lei de Newton)": ["m (kg)", "a (m/s²)"],
+            "Trabalho de uma força": ["F (N)", "d (m)", "cos(θ)"],
 
+            # Bloco 3 (físico-químicos e estimativas):
+            "Ponto de fusão estimado (°C)": ["Composto", "Estimativa"],
+            "Ponto de ebulição estimado (°C)": ["Composto", "Estimativa"],
+            "Entalpia de fusão (kJ/mol)": ["Composto", "ΔHfus"],
+            "Entalpia de vaporização (kJ/mol)": ["Composto", "ΔHvap"],
+            "Entropia (J/mol·K)": ["Composto", "S"],
+            "Energia de ligação (kJ/mol)": ["Ligação", "Energia"],
+            "Ponto crítico estimado": ["Tc (K)", "Pc (atm)"],
+            "Temperatura de autoignição": ["Composto", "Temperatura"],
+            "Índice de refração estimado": ["Composto", "Índice n"],
+            "Condutividade elétrica (S/m)": ["Material", "Condutividade"],
+            
+           
+        }
+        self.atualizar_formulario(self.form_extra, campos[self.combo_extra.currentText()])
+
+    def atualizar_formulario(self, layout, campos):
+        for i in reversed(range(layout.rowCount())):
+            layout.removeRow(i)
+        layout.parent().entradas = []
+        for label in campos:
+            entrada = QLineEdit()
+            entrada.setPlaceholderText(label)
+            entrada.setFixedWidth(200)
+            entrada.setStyleSheet("padding: 5px; font-size: 13px;")
+            layout.parent().entradas.append(entrada)
+            layout.addRow(label, entrada)
+
+    # ========= Cálculos ==========
     def calcular_quimica(self):
         try:
             v = [float(e.text()) for e in self.form_quimica.parent().entradas]
             op = self.combo_quimica.currentText()
-            resultado = {
-                "Molaridade": lambda mol, vol: mol / vol,
-                "Molalidade": lambda mol, kg: mol / kg,
-                "Densidade": lambda m, v: m / v,
-                "pH": lambda H: -1 * math.log10(H),
-                "Diluição (C1V1 = C2V2)": lambda C1, V1, C2=None, V2=None: C1 * V1 / C2 if V2 is None else C1 * V1 / V2 if C2 is None else None,
-            }.get(op, lambda *x: sum(x))  # padrão: soma
-            self.resultado_quimica.setText(f"Resultado: {resultado(*v):.4g}")
+            f = {
+    "Molaridade": lambda mol, vol: mol / vol,
+    "Molalidade": lambda mol, kg: mol / kg,
+    "Normalidade": lambda eq, vol: eq / vol,
+    "% em massa": lambda ms, msol: (ms / msol) * 100,
+    "% em volume": lambda vs, vsol: (vs / vsol) * 100,
+    "% m/v": lambda ms, vsol: (ms / vsol) * 100,
+    "PPM": lambda mg, kg: (mg / (kg * 1e6)) * 1e6,
+    "PPB": lambda ug, kg: (ug / (kg * 1e9)) * 1e9,
+    "Fração molar": lambda molA, molTot: molA / molTot,
+    "Fração em massa": lambda mA, mTot: mA / mTot,
+    "Fração em volume": lambda vA, vTot: vA / vTot,
+    "Densidade": lambda m, v: m / v,
+    "Massa molar": lambda m, mol: m / mol,
+    "Concentração comum": lambda m, v: m / v,
+    "Concentração em mol/L": lambda mol, vol: mol / vol,
+    "Concentração equivalente": lambda eq, vol: eq / vol,
+    "Título em massa": lambda mSol, mTot: mSol / mTot,
+    "Título em volume": lambda vSol, vTot: vSol / vTot,
+    "Massa específica": lambda m, v: m / v,
+    "Volume molar (CNTP)": lambda mol: mol * 22.4,
+    "Pressão osmótica": lambda M, T: 0.0821 * M * T,
+    "pH": lambda H: -1 * (math.log10(H)),
+    "pOH": lambda OH: -1 * (math.log10(OH)),
+    "Ka": lambda H, A, HA: (H * A) / HA,
+    "Kb": lambda OH, B, BOH: (OH * B) / BOH,
+    "Kw": lambda H, OH: H * OH,
+    "Equivalente grama": lambda m, peq: m / peq,
+    "Peso equivalente": lambda mm, n: mm / n,
+    "Grau de ionização": lambda ci, c0: (ci / c0) * 100,
+    "Número de oxidação": lambda ne, na: ne / na,
+    "Constante de dissociação": lambda prod, reag: prod / reag,
+    "Capacidade térmica": lambda q, dt: q / dt,
+    "Calor sensível": lambda m, c, dt: m * c * dt,
+    "Calor latente": lambda m, L: m * L,
+    "Solubilidade": lambda mSol, vol: mSol / vol,
+    "Rendimento da reação": lambda exp, teo: (exp / teo) * 100,
+    "Pureza": lambda mp, mt: (mp / mt) * 100,
+    "Diluição (C1V1 = C2V2)": lambda C1, V1, C2=None, V2=None: C1 * V1 / C2 if V2 is None else C1 * V1 / V2 if C2 is None else None,
+    "Velocidade da reação": lambda dc, dt: dc / dt,
+    "Número de Avogadro": lambda Np, mol: Np / mol
+                
+            }[op]
+            self.resultado_quimica.setText(f"Resultado: {f(*v):.4g}")
         except Exception as e:
-            QMessageBox.critical(self, "Erro no cálculo químico", str(e))
+            QMessageBox.critical(self, "Erro", str(e))
 
     def calcular_conv(self):
         try:
             val = float(self.form_conv.parent().entradas[0].text())
             op = self.combo_convert.currentText()
-            resultado = {
-                "g para kg": lambda g: g / 1000,
-                "kg para g": lambda kg: kg * 1000,
-                "°C para K": lambda c: c + 273.15,
-                "K para °C": lambda k: k - 273.15
-            }.get(op, lambda x: x)
-            self.resultado_conv.setText(f"Resultado: {resultado(val):.4g}")
+            f = {
+    "g para kg": lambda g: g / 1000,
+    "kg para g": lambda kg: kg * 1000,
+    "mg para g": lambda mg: mg / 1000,
+    "g para mg": lambda g: g * 1000,
+    "L para mL": lambda L: L * 1000,
+    "mL para L": lambda mL: mL / 1000,
+    "cm³ para mL": lambda cm3: cm3 * 1.0,
+    "mL para cm³": lambda mL: mL * 1.0,
+    "m/s para km/h": lambda ms: ms * 3.6,
+    "km/h para m/s": lambda kmh: kmh / 3.6,
+    "atm para mmHg": lambda atm: atm * 760,
+    "mmHg para atm": lambda mmHg: mmHg / 760,
+    "atm para Pa": lambda atm: atm * 101325,
+    "Pa para atm": lambda pa: pa / 101325,
+    "J para cal": lambda j: j / 4.184,
+    "cal para J": lambda cal: cal * 4.184,
+    "°C para K": lambda c: c + 273.15,
+    "K para °C": lambda k: k - 273.15,
+    "cm² para m²": lambda cm2: cm2 / 10000,
+    "m² para cm²": lambda m2: m2 * 10000
+                
+            }[op]
+            self.resultado_conv.setText(f"Resultado: {f(val):.4g}")
         except Exception as e:
-            QMessageBox.critical(self, "Erro na conversão", str(e))
+            QMessageBox.critical(self, "Erro", str(e))
 
     def calcular_extra(self):
         try:
             v = [float(e.text()) for e in self.form_extra.parent().entradas]
             op = self.combo_extra.currentText()
-            resultado = {
-                "Energia livre de Gibbs": lambda dh, t, ds: dh - t * ds,
-                "Volume em gases ideais": lambda n, R, T, P: (n * R * T) / P
-            }.get(op, lambda *x: sum(x))
-            self.resultado_extra.setText(f"Resultado: {resultado(*v):.4g}")
+            f = {
+    "Energia livre de Gibbs": lambda dh, t, ds: dh - t * ds,
+    "Lei dos gases ideais": lambda n, R, T, V: (n * R * T) / V,
+    "Pressão em gases ideais": lambda n, R, T, V: (n * R * T) / V,
+    "Volume em gases ideais": lambda n, R, T, P: (n * R * T) / P,
+    "Equilíbrio químico (Kc)": lambda p, r: p / r,
+    "Equilíbrio químico (Kp)": lambda pp, pr: pp / pr,
+    "Lei de Hess": lambda dh1, dh2, dh3: dh1 + dh2 + dh3,
+    "Velocidade média": lambda dx, dt: dx / dt,
+    "Força (2ª Lei de Newton)": lambda m, a: m * a,
+    "Trabalho de uma força": lambda f, d, cos: f * d * cos
+            }[op]
+            self.resultado_extra.setText(f"Resultado: {f(*v):.4g}")
         except Exception as e:
-            QMessageBox.critical(self, "Erro nos cálculos avançados", str(e))
+            QMessageBox.critical(self, "Erro", str(e))
+
+
+import math
