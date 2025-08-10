@@ -32,10 +32,9 @@ class GraficosA(QWidget):
         self.combo = QComboBox()
         self.combo.addItems([
             "Solubilidade", "Titulação", "Calibração", "Dispersão", "Histograma",
-            "UV‑Vis", "Diagrama de Fases", "Superfície 3D", "Contorno", "Energia vs Coord.",
-            "Cromatograma", "Barras", "Regressão Linear", "Barras com Erro", "Cinética Química",
-            "Diagrama de Pourbaix", "Arrhenius", "Van’t Hoff", "Michaelis‑Menten", "Lineweaver‑Burk",
-            "pKa Curve", "ΔpH/ΔV", "Isoterma Adsorção", "Capacidade Térmica", "RMN Spectrum",
+            "UV‑Vis", "Diagrama de Fases","Cromatograma", "Barras", "Regressão Linear", "Barras com Erro", "Cinética Química",
+            "Arrhenius","Michaelis‑Menten", "Lineweaver‑Burk",
+            "pKa Curve","Isoterma Adsorção", "Capacidade Térmica", "RMN Spectrum",
             "Mass Spectrum", "TGA", "DSC/DTA", "Adsorção Cinética", "Polarização"
         ])
          # ===== Botões para abrir GeoGebra e WolframAlpha
@@ -44,6 +43,9 @@ class GraficosA(QWidget):
         btn_geo.clicked.connect(self._abrir_geogebra)
         btn_wolf = QPushButton("WolframAlpha")
         btn_wolf.clicked.connect(self._abrir_wolfram)
+        w_s=QPushButton("Graf.Weibull")
+        but_w.clicked.connect(self.siteWeibull)
+        link_buttons.addWidget(but_w)
         link_buttons.addWidget(btn_geo)
         link_buttons.addWidget(btn_wolf)
         self.layout().addLayout(link_buttons)
@@ -190,17 +192,7 @@ class GraficosA(QWidget):
 
 
 
-    # 9 Contorno
-    def _build_Contorno(self, form):
-        self.eXY=QLineEdit(); form.addRow("X;Y linhas:",self.eXY)
-        self.eZc=QLineEdit(); form.addRow("Z linhas:",self.eZc)
-    def _plot_Contorno(self):
-        l=self.eXY.text().split(';')
-        X=list(map(float,l[0].split(','))); Y=list(map(float,l[1].split(',')))
-        Z=list(map(float,self.eZc.text().split(',')))
-        self.ax.clear(); self.ax.contour(X,Y,np.array(Z).reshape(len(Y),len(X)))
-        self.ax.set_title("Contorno",fontsize=14)
-
+    
 
 
     # 11 Cromatograma
@@ -266,18 +258,7 @@ class GraficosA(QWidget):
         self.ax.plot(t,c,'-o')
         self.ax.set_title("Cinética Química",fontsize=14)
         self.ax.set_xlabel("Tempo (s)"); self.ax.set_ylabel("Conc.")
-    # 16 Diagrama de Pourbaix
-    def _build_Diagrama_de_Pourbaix(self, form):
-        self.ePH = QLineEdit(); form.addRow("pH valores:", self.ePH)
-        self.eEH = QLineEdit(); form.addRow("Potencial Eₕ (V):", self.eEH)
-    def _plot_Diagrama_de_Pourbaix(self):
-        ph = list(map(float, self.ePH.text().split(',')))
-        eh = list(map(float, self.eEH.text().split(',')))
-        if len(ph) != len(eh): raise ValueError()
-        self.ax.clear()
-        self.ax.plot(ph, eh, '-o', color='teal')
-        self.ax.set_title("Diagrama de Pourbaix", fontsize=14)
-        self.ax.set_xlabel("pH"); self.ax.set_ylabel("Potencial Eₕ (V)")
+  
 
     # 17 Arrhenius
     def _build_Arrhenius(self, form):
@@ -292,7 +273,7 @@ class GraficosA(QWidget):
         self.ax.set_title("Gráfico de Arrhenius", fontsize=14)
         self.ax.set_xlabel("1/T (1/K)"); self.ax.set_ylabel("ln k")
 
-    # 18 Van’t Hoff
+
    
 
     # 19 Michaelis–Menten
@@ -330,7 +311,7 @@ class GraficosA(QWidget):
         self.ax.set_title("Curva de pKa", fontsize=14)
         self.ax.set_xlabel("pH"); self.ax.set_ylabel("log Ka")
 
-    # 22 ΔpH/ΔV Titulação
+  
   
 
     # 23 Isoterma de Adsorção
@@ -422,11 +403,9 @@ class GraficosA(QWidget):
         self.ax.set_xlabel("Potencial (V)"); self.ax.set_ylabel("Corrente (A)")
         
         
-        
-  
-
+    def siteWeibull(self):
+        webbrowser.open("https://www-acsu-buffalo-edu.translate.goog/~adamcunn/probability/weibull.html?_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc")
     def _abrir_geogebra(self):
         webbrowser.open("https://www.geogebra.org/graphing")
-
     def _abrir_wolfram(self):
         webbrowser.open("https://www.wolframalpha.com/")
