@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 import webbrowser
+import math
 
 class CalculadoraQuimicaPage(QWidget):
     def __init__(self):
@@ -50,15 +51,27 @@ class CalculadoraQuimicaPage(QWidget):
         # ====== 2. BLOCO: Conversões SI ======
         bloco2 = self.blocos_titulo("🔁 Conversões de Unidades (SI)")
         self.combo_convert = self.novo_combo([
-    "Massa (g ↔ kg)",
-    "Comprimento (m ↔ cm ↔ mm)",
-    "Volume (L ↔ mL ↔ cm³)",
-    "Tempo (h ↔ min ↔ s)",
-    "Temperatura (°C ↔ K)",
-    "Área (m² ↔ cm²)",
-    "Velocidade (m/s ↔ km/h)",
-    "Pressão (atm ↔ Pa ↔ mmHg)",
-    "Densidade (g/mL ↔ kg/m³)"
+            "g para kg",
+            "kg para g",
+            "mg para g",
+            "g para mg",
+            "L para mL",
+            "mL para L",
+            "cm³ para mL",
+            "mL para cm³",
+            "m/s para km/h",
+            "km/h para m/s",
+            "atm para mmHg",
+            "mmHg para atm",
+            "atm para Pa",
+            "Pa para atm",
+            "J para cal",
+            "cal para J",
+            "°C para K",
+            "K para °C",
+            "cm² para m²",
+            "m² para cm²",
+            
             
         ])
         self.combo_convert.currentIndexChanged.connect(self.atualizar_campos_conv)
@@ -78,6 +91,17 @@ class CalculadoraQuimicaPage(QWidget):
         # ====== 3. BLOCO: Cálculos Avançados ======
         bloco3 = self.blocos_titulo("📘 Cálculos Avançados")
         self.combo_extra = self.novo_combo([
+            "Energia livre de Gibbs",
+            "Lei dos gases ideais",
+            "Volume em gases ideais",
+            "Equilíbrio químico (Kp)",
+            "Equilíbrio químico (Kc)",
+            "Lei de Hess",
+            "Velocidade média (m/s)",
+            "Força (2ª lei de Newton)",
+            "Trabalho de uma força",
+
+            # Bloco 3 (físico-químicos e estimativas):
             "Ponto de fusão estimado (°C)",
             "Ponto de ebulição estimado (°C)",
             "Entalpia de fusão (kJ/mol)",
@@ -88,15 +112,7 @@ class CalculadoraQuimicaPage(QWidget):
             "Temperatura de autoignição",
             "Índice de refração estimado",
             "Condutividade elétrica (S/m)",
-            "Energia livre de Gibbs"
-            "Lei dos gases ideais",
-            "Volume em gases ideais",
-            "Equilíbrio químico (Kp)",
-            "Equilíbrio químico (Kc)",
-            "Lei de Hess",
-            "Velocidade média (m/s)",
-            "Força (2ª lei de Newton)",
-            "Trabalho de uma força"
+            
             
         ])
         self.combo_extra.currentIndexChanged.connect(self.atualizar_campos_extra)
@@ -375,4 +391,4 @@ class CalculadoraQuimicaPage(QWidget):
     
 
 
-import math
+
