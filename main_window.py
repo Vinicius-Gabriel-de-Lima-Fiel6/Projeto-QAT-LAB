@@ -11,6 +11,7 @@ from EngineeringToolsPage import EngineeringToolsPage
 from equipamentos import ControleEquipamentos
 from ControleEstoque import ControleEstoque
 from tabelas import TabelaQuimica
+from graficos import GraficosA
 
 
 class MainWindow(QMainWindow):
@@ -47,6 +48,7 @@ class MainWindow(QMainWindow):
         self.ControleEquipamentos=ControleEquipamentos()
         self.ControleEstoque=ControleEstoque()
         self.tabelas=TabelaQuimica()
+        self.graficos=GraficosA()
 
         # Adicionando as páginas ao QStackedWidget
         self.stacked_widget.addWidget(self.dashboard)
@@ -57,6 +59,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.ControleEstoque)
         self.stacked_widget.addWidget(self.calculadora)
         self.stacked_widget.addWidget(self.tabelas)
+        self.stacked_widget.addWidget(self.graficos)
 
         # Botões do menu
         buttons = [
@@ -68,6 +71,7 @@ class MainWindow(QMainWindow):
             ("Controle do estoque",self.ControleEstoque),
             ("Calculadora química",self.calculadora),
             ("Tabelas periódica/solubilidade",self.tabelas),
+            ("Gráficos",self.graficos),
         ]
 
         # Adicionando os botões ao menu
