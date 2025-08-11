@@ -35,7 +35,7 @@ class GraficosA(QWidget):
             "UV‑Vis", "Diagrama de Fases","Cromatograma", "Barras", "Regressão Linear", "Barras com Erro", "Cinética Química",
             "Arrhenius","Michaelis‑Menten", "Lineweaver‑Burk",
             "pKa Curve","Isoterma Adsorção", "Capacidade Térmica", "RMN Spectrum",
-            "Mass Spectrum", "TGA", "DSC/DTA", "Adsorção Cinética", "Polarização"
+            "Mass Spectrum", "TGA","Adsorção Cinética", "Polarização"
         ])
          # ===== Botões para abrir GeoGebra e WolframAlpha
         link_buttons = QHBoxLayout()
@@ -44,8 +44,8 @@ class GraficosA(QWidget):
         btn_wolf = QPushButton("WolframAlpha")
         btn_wolf.clicked.connect(self._abrir_wolfram)
         w_s=QPushButton("Graf.Weibull")
-        but_w.clicked.connect(self.siteWeibull)
-        link_buttons.addWidget(but_w)
+        w_s.clicked.connect(self.siteWeibull)
+        link_buttons.addWidget(w_s)
         link_buttons.addWidget(btn_geo)
         link_buttons.addWidget(btn_wolf)
         self.layout().addLayout(link_buttons)
@@ -368,17 +368,6 @@ class GraficosA(QWidget):
         self.ax.clear(); self.ax.plot(temp, m, '-o', color='sienna')
         self.ax.set_title("TGA (Termogravimetria)", fontsize=14)
         self.ax.set_xlabel("Temperatura (°C)"); self.ax.set_ylabel("Massa (%)")
-
-    # 28 DSC/DTA
-    def _build_DSC_DTA(self, form):
-        self.eTempD = QLineEdit(); form.addRow("Temperatura (°C):", self.eTempD)
-        self.eEnergy = QLineEdit(); form.addRow("Energia (J):", self.eEnergy)
-    def _plot_DSC_DTA(self):
-        temp = list(map(float, self.eTempD.text().split(',')))
-        en = list(map(float, self.eEnergy.text().split(',')))
-        self.ax.clear(); self.ax.plot(temp, en, '-o', color='crimson')
-        self.ax.set_title("DTA / DSC", fontsize=14)
-        self.ax.set_xlabel("Temperatura (°C)"); self.ax.set_ylabel("Energia (J)")
 
     # 29 Adsorção Cinética
     def _build_Adsorção_Cinética(self, form):
