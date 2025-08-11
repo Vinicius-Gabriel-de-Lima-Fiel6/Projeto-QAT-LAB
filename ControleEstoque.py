@@ -9,11 +9,11 @@ import os
 import webbrowser
 import numpy as np
 import pandas as pd
-import smtplib
-from email.message import EmailMessage
-from email_config import *
+
+from notifier_smtp import alerta_estoque
 
 DB_PATH = "data/lab_data.db"
+ALERT_RECIPIENTS = ["juliabcohen@icloud.com", "julia.brito.cohen@gmail.com"]  # ajustar
 
 class ControleEstoque(QWidget):
     def __init__(self):
@@ -83,14 +83,17 @@ class ControleEstoque(QWidget):
                 consumo_medio = self.calculate_average_consumption(substancia[0])
                 tempo_ate_fim = substancia[2] / consumo_medio if consumo_medio > 0 else 0
 
+                # coluna consumo médio
                 item_consumo = QTableWidgetItem(f"{consumo_medio:.2f}")
                 item_consumo.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
                 self.table.setItem(row_index, 3, item_consumo)
 
+                # coluna tempo até acabar
                 item_tempo = QTableWidgetItem(f"{tempo_ate_fim:.2f} dias")
                 item_tempo.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
                 self.table.setItem(row_index, 4, item_tempo)
 
+                # botões
                 buy_button = QPushButton("Comprar")
                 buy_button.clicked.connect(lambda _, p=substancia: self.open_purchase_link(p))
                 self.table.setCellWidget(row_index, 5, buy_button)
@@ -107,26 +110,29 @@ class ControleEstoque(QWidget):
                 add_daily_button.clicked.connect(lambda _, p=substancia: self.add_daily_consumption(p))
                 self.table.setCellWidget(row_index, 8, add_daily_button)
 
+                # destaque e alerta
                 if consumo_medio > 0 and tempo_ate_fim < 5:
                     for col in range(self.table.columnCount()):
                          item = self.table.item(row_index, col)
                          if item:
                             item.setBackground(QBrush(QColor("#FF6961")))
                     if tempo_ate_fim < 2:  # exemplo: menos de 2 dias restantes
-                      enviar_alerta_email(
-                      destinatario="seu_destinatario@gmail.com",
-                      nome_substancia=substancia,
-                      quantidade=produtos,
-                      tempo_restante=tempo_ate_fim)
-                    
-                      
-                          
+                        try:
+                            alerta_estoque(
+                                destinatarios=ALERT_RECIPIENTS,
+                                nome_substancia=substancia[1],
+                                quantidade=f"{substancia[2]} g",
+                                tempo_restante_dias=round(tempo_ate_fim, 1)
+                            )
+                            print(f"✔️ Alerta enviado para {ALERT_RECIPIENTS} ({substancia[1]})")
+                        except Exception as e:
+                            print(f"❌ Falha ao enviar alerta: {e}")
 
             conn.close()
-            self.table.resizeRowsToContents()
 
-        except sqlite3.Error as e:
-            QMessageBox.warning(self, "Erro", f"Erro ao carregar dados: {e}")
+        except Exception as e:
+            print(f"❌ Erro ao carregar dados: {e}")
+
 
     def calculate_average_consumption(self, produto_id):
         try:
