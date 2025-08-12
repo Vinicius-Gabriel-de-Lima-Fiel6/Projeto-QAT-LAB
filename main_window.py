@@ -7,7 +7,7 @@ from dashboard_page import DashboardPage
 from substancias import SubstancesPage
 from projects_page import ProjectsPage
 from calculadora import CalculadoraQuimicaPage
-from EngineeringToolsPage import EngineeringToolsPage
+from IA import ChatbotApp
 from equipamentos import ControleEquipamentos
 from ControleEstoque import ControleEstoque
 from tabelas import TabelaQuimica
@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         self.substancias = SubstancesPage()  # Corrigido
         self.projects = ProjectsPage()
         self.calculadora=CalculadoraQuimicaPage()
-        self.EngineeringToolsPage=EngineeringToolsPage()
+        self.IA=ChatbotApp()
         self.ControleEquipamentos=ControleEquipamentos()
         self.ControleEstoque=ControleEstoque()
         self.tabelas=TabelaQuimica()
@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.dashboard)
         self.stacked_widget.addWidget(self.substancias)  # Corrigido
         self.stacked_widget.addWidget(self.projects)
-        self.stacked_widget.addWidget(self.EngineeringToolsPage)
+        self.stacked_widget.addWidget(self.IA)
         self.stacked_widget.addWidget(self.ControleEquipamentos)
         self.stacked_widget.addWidget(self.ControleEstoque)
         self.stacked_widget.addWidget(self.calculadora)
@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
             ("Dashboard", self.dashboard),
             ("Cadastro de Substâncias", self.substancias),
             ("Projetos", self.projects),
-            ("IA LAB/PERIÓDICOS/BANCOS DE DADOS",self.EngineeringToolsPage),
+            ("IA",self.IA),
             ("Controle de equipamentos",self.ControleEquipamentos),
             ("Controle do estoque",self.ControleEstoque),
             ("Calculadora química",self.calculadora),
@@ -102,3 +102,4 @@ class MainWindow(QMainWindow):
         if os.path.exists(qss_path):
             with open(qss_path, "r") as file:
                 self.setStyleSheet(file.read())
+
