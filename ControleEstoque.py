@@ -40,6 +40,7 @@ class ControleEstoque(QWidget):
         self.btn_delete_substance = QPushButton("❌ Excluir Substância Selecionada")
         self.btn_delete_substance.clicked.connect(self.delete_selected_substance)
         self.layout().addWidget(self.btn_delete_substance)
+         
 
         self.init_db()
         self.load_data()
