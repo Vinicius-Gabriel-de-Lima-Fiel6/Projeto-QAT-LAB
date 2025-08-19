@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 import sqlite3
 import os
+from exportPdFEquipamentos import export_pdf_equipments_and_maintenance
 
 DB_PATH = "data/lab_data.db"
 
@@ -78,6 +79,10 @@ class ControleEquipamentos(QWidget):
         self.btn_refresh.clicked.connect(self.load_data)
         buttons_layout.addWidget(self.btn_refresh)
         self.layout().addLayout(buttons_layout)
+        # botão de exportação PDF
+        self.btn_export = QPushButton ("📄 Exportar PDF")
+        self.btn_export.clicked.connect(self.exportar_pdf_equipamentos)
+        buttons_layout.addWidget(self.btn_export)
 
         # Inicialização
         self.init_db()
@@ -239,3 +244,48 @@ class ControleEquipamentos(QWidget):
         """Limpar os campos de histórico de manutenção"""
         for field in self.inputs_history.values():
             field.clear()
+
+    def exportar_pdf_equipamentos(self):
+        import sqlite3
+        DB_PATH = "data/lab_data.db"
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+    # Buscar equipamentos
+        cursor.execute("SELECT id, nome, tipo, status, ultima_manutencao, localizacao, responsavel, categoria FROM equipamentos")
+        equipamentos_rows = cursor.fetchall()
+        equipamentos = [
+        {
+            "id": row[0],
+            "nome": row[1],
+            "tipo": row[2],
+            "status": row[3],
+            "ultima_manutencao": row[4],
+            "localizacao": row[5],
+            "responsavel": row[6],
+            "categoria": row[7]
+        }
+        for row in equipamentos_rows
+       ]
+
+    # Buscar manutenções (com nome do equipamento)
+        cursor.execute("""
+        SELECT m.id, e.nome, m.data_manutencao, m.descricao
+        FROM manutencao m
+        LEFT JOIN equipamentos e ON m.equipamento_id = e.id
+        """)
+        manutencoes_rows = cursor.fetchall()
+        manutencoes = [
+        {
+            "id": row[0],
+            "equipamento_nome": row[1],
+            "data_manutencao": row[2],
+            "descricao": row[3]
+        }
+        for row in manutencoes_rows
+       ]
+
+        conn.close()
+
+        export_pdf_equipments_and_maintenance(equipamentos, manutencoes, "equipamentos_e_manutencoes.pdf")
+        QMessageBox.information(self, "Exportação", "Equipamentos e manunteções exportados com sucesso!")

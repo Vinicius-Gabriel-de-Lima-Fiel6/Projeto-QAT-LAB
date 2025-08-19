@@ -47,12 +47,13 @@ def export_pdf_estoque_e_consumo(produtos, consumos, filename):
 
     # Tabela Consumos
     table_data_consumo = [["ID", "Produto", "Quantidade Consumida", "Data do Consumo"]]
-    for row in consumos:
-        table_data_consumo.append([
+    for row in produtos:
+        table_data_estoque.append([
             row.get('id', ''),
-            row.get('produto_nome', ''),
-            row.get('quantidade_consumida', ''),
-            row.get('data_consumo', '')
+            row.get('nome', ''),
+            row.get('quantidade', ''),
+            f"{row.get('consumo_medio', 0):.2f}",
+            f"{row.get('tempo_ate_fim', 0):.2f}"
         ])
     table_consumo = Table(table_data_consumo, colWidths=[30, 90, 90, 110])
     table_consumo.setStyle(TableStyle([

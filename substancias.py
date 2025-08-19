@@ -51,8 +51,11 @@ class SubstancesPage(QWidget):
         self.btn_remove.clicked.connect(self.remove_selected)
         self.btn_refresh = QPushButton("🔄 Atualizar")
         self.btn_refresh.clicked.connect(self.load_data)
+        self.btn_export = QPushButton("📄 Exportar PDF")
+        self.btn_export.clicked.connect(self.export_pdf_substances)
         buttons_layout.addWidget(self.btn_remove)
         buttons_layout.addWidget(self.btn_refresh)
+        buttons_layout.addWidget(self.btn_export)
         self.layout().addLayout(buttons_layout)
 
         # Inicializa banco de dados
@@ -147,3 +150,24 @@ class SubstancesPage(QWidget):
         """Limpar os campos de entrada"""
         for field in self.inputs.values():
             field.clear()
+    
+    def export_pdf_substances(self):
+        # Exportar dados de substâncias para um arquivo PDF
+        from exportPdfSubstancias import export_pdf_substances
+        
+        # Coleta os dados da tabela
+        data = []
+        for row in range(self.table.rowCount()):
+            row_data = {
+                "id": self.table.item(row, 0).text(),
+                "nome": self.table.item(row, 1).text(),
+                "finalidade": self.table.item(row, 2).text(),
+                "concentracao": self.table.item(row, 3).text(),
+                "quantidade": self.table.item(row, 4).text(),
+                "validade": self.table.item(row, 5).text()
+            }
+            data.append(row_data)
+
+        # Exporta os dados para PDF
+        export_pdf_substances(data, "substancias_exportadas.pdf")
+        QMessageBox.information(self, "Exportação", "Substâncias exportadas com sucesso!")

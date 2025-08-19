@@ -9,6 +9,7 @@ import os
 import webbrowser
 import numpy as np
 import pandas as pd
+from ExportPdfEstoque import export_pdf_estoque_e_consumo  # Importando a função de exportação PDF
 
 from notifier_smtp import alerta_estoque
 
@@ -37,9 +38,11 @@ class ControleEstoque(QWidget):
         self.layout().addWidget(self.table)
         self.table.setColumnWidth(8, 180)
 
+
         self.btn_delete_substance = QPushButton("❌ Excluir Substância Selecionada")
         self.btn_delete_substance.clicked.connect(self.delete_selected_substance)
         self.layout().addWidget(self.btn_delete_substance)
+
          
 
         self.init_db()
@@ -225,3 +228,4 @@ class ControleEstoque(QWidget):
         finally:
    
             conn.close()
+

@@ -3,6 +3,7 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit,QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout,QMessageBox, QHeaderView)
 import sqlite3
 import os
+import exportPDFProjetos  # Importando a função de exportação PDF
 
 DB_PATH = "data/lab_data.db"
 
@@ -43,9 +44,16 @@ class ProjectsPage(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.layout().addWidget(self.table)
 
+        buttons_layout = QHBoxLayout()
+
         btn_refresh = QPushButton("🔄 Atualizar Lista")
         btn_refresh.clicked.connect(self.load_data)
-        self.layout().addWidget(btn_refresh)
+        buttons_layout.addWidget(btn_refresh)
+
+        btn_export = QPushButton("📄 Exportar PDF") #botão para exportação
+        btn_export.clicked.connect(self.export_pdf_projects)
+        buttons_layout.addWidget(btn_export)
+        self.layout().addLayout(buttons_layout)
 
         self.init_db()
         self.load_data()
@@ -98,3 +106,23 @@ class ProjectsPage(QWidget):
             for j, value in enumerate(row):
                 self.table.setItem(i, j, QTableWidgetItem(str(value)))
         conn.close()
+
+    def export_pdf_projects(self):
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, nome, status, descricao FROM projetos")
+        rows = cursor.fetchall()
+        conn.close()
+
+        dados = [
+            {
+                "id": row[0],
+                "nome": row[1],
+                "status": row[2],
+                "descricao": row[3]
+            }
+            for row in rows
+        ]
+
+        exportPDFProjetos.export_pdf_projects(dados, "projetos_exportados.pdf")
+        QMessageBox.information(self, "Exportação", "Projetos exportados com sucesso!")

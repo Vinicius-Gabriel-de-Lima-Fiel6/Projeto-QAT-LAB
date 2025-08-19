@@ -4,7 +4,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 
 
-def export_pdf_substances(data, filename):
+def export_pdf_projects(data, filename):
     """
     Exportar dados dos projetos para um arquivo PDF.
     """
@@ -58,4 +58,4 @@ if __name__ == "__main__":
         for row in rows
     ]
 
-    export_pdf_substances(dados, "projetos_exportados.pdf")
+    export_pdf_projects(dados, "projetos_exportados.pdf")
