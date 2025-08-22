@@ -662,10 +662,4 @@ class ControleEquipamentos(QWidget):
     def open_dashboard(self):
         import webbrowser
         webbrowser.open("https://app.powerbi.com/")
-        
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window =ControleEquipamentos()
-    window.show()
-    sys.exit(app.exec())
