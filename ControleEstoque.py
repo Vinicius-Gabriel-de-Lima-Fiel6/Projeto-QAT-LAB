@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem,
-    QMessageBox, QHeaderView, QInputDialog
+    QMessageBox, QHeaderView, QInputDialog, QHBoxLayout
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QBrush
@@ -38,12 +38,18 @@ class ControleEstoque(QWidget):
         self.layout().addWidget(self.table)
         self.table.setColumnWidth(8, 180)
 
+        buttons_layout = QHBoxLayout()
+        self.btn_remove = QPushButton("❌ Excluir Substância Selecionada")
+        self.btn_remove.clicked.connect(self.delete_selected_substance)
+        self.btn_refresh = QPushButton("🔄 Atualizar")
+        self.btn_refresh.clicked.connect(self.load_data)
+        self.btn_export = QPushButton("📄 Exportar PDF")
+        self.btn_export.clicked.connect(self.export_pdf_estoque_e_consumo)  
+        buttons_layout.addWidget(self.btn_remove)
+        buttons_layout.addWidget(self.btn_refresh)
+        buttons_layout.addWidget(self.btn_export)
+        self.layout().addLayout(buttons_layout)
 
-        self.btn_delete_substance = QPushButton("❌ Excluir Substância Selecionada")
-        self.btn_delete_substance.clicked.connect(self.delete_selected_substance)
-        self.layout().addWidget(self.btn_delete_substance)
-
-         
 
         self.init_db()
         self.load_data()
@@ -229,3 +235,45 @@ class ControleEstoque(QWidget):
    
             conn.close()
 
+    def export_pdf_estoque_e_consumo(self):
+        try:
+            from ExportPdfEstoque import export_pdf_estoque_e_consumo
+
+            produtos = []
+            for row in range(self.table.rowCount()):
+                produto_id = self.table.item(row, 0).text()
+                nome = self.table.item(row, 1).text()
+                quantidade = float(self.table.item(row, 2).text())
+                consumo_medio = float(self.table.item(row, 3).text())
+                tempo_ate_fim = self.table.item(row, 4).text()
+
+                produtos.append({
+                    "id": produto_id,
+                    "nome": nome,
+                    "quantidade": quantidade,
+                    "consumo_medio": consumo_medio,
+                    "tempo_ate_fim": tempo_ate_fim
+                })
+
+            consumos = []
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT c.id, s.nome, c.quantidade_consumida, c.data_consumo
+                FROM consumo c
+                LEFT JOIN substancias s ON c.produto_id = s.id
+            """)
+            consumos_rows = cursor.fetchall()
+            for row in consumos_rows:
+                consumos.append({
+                    "id": row[0],
+                    "produto_nome": row[1],
+                    "quantidade_consumida": row[2],
+                    "data_consumo": row[3]
+                })
+            conn.close()
+
+            export_pdf_estoque_e_consumo(produtos, consumos, "estoque_e_consumos.pdf")
+            QMessageBox.information(self, "Exportação", "PDF exportado com sucesso!")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro ao exportar PDF", str(e))

@@ -16,21 +16,54 @@ def export_pdf_estoque_e_consumo(produtos, consumos, filename):
     # Tabela Estoque
     table_data_estoque = [["ID", "Nome", "Quantidade", "Consumo Médio Diário", "Tempo até Esgotamento (dias)"]]
     for row in produtos:
+        consumo_medio = row.get('consumo_medio', 0)
+        tempo_ate_fim = row.get('tempo_ate_fim', 0)
+        try:
+            consumo_medio = float(consumo_medio)
+        except ValueError:
+            consumo_medio = 0.0
+        try:
+            tempo_ate_fim = float(tempo_ate_fim)
+        except ValueError:
+            tempo_ate_fim = 0.0
         table_data_estoque.append([
             row.get('id', ''),
             row.get('nome', ''),
             row.get('quantidade', ''),
-            f"{row.get('consumo_medio', 0):.2f}",
-            f"{row.get('tempo_ate_fim', 0):.2f}"
+            f"{consumo_medio:.2f}",
+            f"{tempo_ate_fim:.2f}"
         ])
-    table_estoque = Table(table_data_estoque, colWidths=[30, 90, 60, 90, 110])
+
+
+    # Título Consumos
+    title_consumo = Paragraph("Histórico de Consumo", styles['Title'])
+    elements.append(title_consumo)
+    elements.append(Spacer(1, 8))
+
+    # Tabela Consumos
+    table_data_consumo = [["ID", "Produto", "Quantidade Consumida", "Data do Consumo"]]
+    for row in consumos:
+        quantidade_consumida = row.get('quantidade_consumida', 0)
+        try:
+            quantidade_consumida = float(quantidade_consumida)
+        except ValueError:
+            quantidade_consumida = 0.0
+        table_data_consumo.append([
+            row.get('id', ''),
+            row.get('produto_nome', ''),
+            f"{quantidade_consumida:.2f}",
+            row.get('data_consumo', '')
+        ])
+
+    colWidths = [60, 144, 72, 108, 108]
+
+    table_estoque = Table(table_data_estoque, colWidths=colWidths)
     table_estoque.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 7), 
-        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('FONTSIZE', (0, 0), (-1, -1), 7),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
         ('TOPPADDING', (0, 0), (-1, -1), 2),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 2),
@@ -40,29 +73,14 @@ def export_pdf_estoque_e_consumo(produtos, consumos, filename):
     elements.append(table_estoque)
     elements.append(Spacer(1, 18))
 
-    # Título Consumos
-    title_consumo = Paragraph("Histórico de Consumo", styles['Title'])
-    elements.append(title_consumo)
-    elements.append(Spacer(1, 8))
 
-    # Tabela Consumos
-    table_data_consumo = [["ID", "Produto", "Quantidade Consumida", "Data do Consumo"]]
-    for row in produtos:
-        table_data_estoque.append([
-            row.get('id', ''),
-            row.get('nome', ''),
-            row.get('quantidade', ''),
-            f"{row.get('consumo_medio', 0):.2f}",
-            f"{row.get('tempo_ate_fim', 0):.2f}"
-        ])
-    table_consumo = Table(table_data_consumo, colWidths=[30, 90, 90, 110])
+    table_consumo = Table(table_data_consumo, colWidths=[60, 144, 108, 108, 108])
     table_consumo.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 7),
-        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
         ('TOPPADDING', (0, 0), (-1, -1), 2),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 2),
