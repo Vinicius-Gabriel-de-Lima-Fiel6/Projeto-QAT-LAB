@@ -45,6 +45,9 @@ class GraficosA(QWidget):
         btn_wolf.clicked.connect(self._abrir_wolfram)
         w_s=QPushButton("Graf.Weibull")
         w_s.clicked.connect(self.siteWeibull)
+        w_matlab=QPushButton("Graf.Matlab")
+        w_matlab.clicked.connect(self._abrir_matlab)
+        link_buttons.addWidget(w_matlab)
         link_buttons.addWidget(w_s)
         link_buttons.addWidget(btn_geo)
         link_buttons.addWidget(btn_wolf)
@@ -398,3 +401,5 @@ class GraficosA(QWidget):
         webbrowser.open("https://www.geogebra.org/graphing")
     def _abrir_wolfram(self):
         webbrowser.open("https://www.wolframalpha.com/")
+    def _abrir_matlab(self):
+        webbrowser.open("https://matlab.mathworks.com/")
