@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QAT LAB - Sistema de Gerenciamento</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-placeholder">🧪</div>
+                <h1>QAT LAB</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn" onclick="showPage('welcome')"><i class="fas fa-home"></i> Início</button>
+                <button class="nav-btn" onclick="showPage('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</button>
+                <button class="nav-btn" onclick="showPage('substancias')"><i class="fas fa-flask"></i> Substâncias</button>
+                <button class="nav-btn" onclick="showPage('calculadora')"><i class="fas fa-calculator"></i> Calculadora</button>
+                <button class="nav-btn" onclick="showPage('equipamentos')"><i class="fas fa-tools"></i> Equipamentos</button>
+                <button class="nav-btn" onclick="showPage('projetos')"><i class="fas fa-project-diagram"></i> Projetos</button>
+                <button class="nav-btn" onclick="showPage('estoque')"><i class="fas fa-boxes"></i> Estoque</button>
+                <button class="nav-btn" onclick="window.location.href='graficos.html'"><i class="fas fa-chart-area"></i> Gráficos</button>
+                <button class="nav-btn" onclick="showPage('ia')"><i class="fas fa-robot"></i> IA</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Página Inicial -->
+            <div id="welcome-page" class="page active">
+                <div class="welcome-container">
+                    <h2>Bem-vindo ao QAT LAB</h2>
+                    <p>Sistema Inteligente de Gerenciamento de Laboratório Químico</p>
+                    
+                    <!-- Upload de Arquivos -->
+                    <div class="upload-container">
+                        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Upload de Arquivos</h3>
+                            <p>Clique aqui ou arraste arquivos para fazer upload</p>
+                        </div>
+                        <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.jpg,.png">
+                        <div id="uploadedFiles" class="uploaded-files"></div>
+                    </div>
+                    
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <h3><i class="fas fa-flask"></i> Distribuição de Substâncias</h3>
+                            <canvas id="substanciasChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3><i class="fas fa-tools"></i> Status dos Equipamentos</h3>
+                            <canvas id="equipamentosChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card" onclick="showPage('dashboard')">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Dashboard</h3>
+                            <p>Visão geral e análises do laboratório</p>
+                        </div>
+                        <div class="feature-card" onclick="showPage('substancias')">
+                            <i class="fas fa-flask"></i>
+                            <h3>Substâncias</h3>
+                            <p>Gerenciar substâncias químicas e estoque</p>
+                        </div>
+                        <div class="feature-card" onclick="showPage('calculadora')">
+                            <i class="fas fa-calculator"></i>
+                            <h3>Calculadora</h3>
+                            <p>Cálculos químicos e científicos avançados</p>
+                        </div>
+                        <div class="feature-card" onclick="showPage('equipamentos')">
+                            <i class="fas fa-tools"></i>
+                            <h3>Equipamentos</h3>
+                            <p>Controle e manutenção de equipamentos</p>
+                        </div>
+                        <div class="feature-card" onclick="showPage('projetos')">
+                            <i class="fas fa-project-diagram"></i>
+                            <h3>Projetos</h3>
+                            <p>Gerenciar projetos científicos e pesquisas</p>
+                        </div>
+                        <div class="feature-card" onclick="showPage('ia')">
+                            <i class="fas fa-robot"></i>
+                            <h3>Inteligência Artificial</h3>
+                            <p>Assistente IA, webcam e análise de objetos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Página de IA -->
+            <div id="ia-page" class="page">
+                <div class="ia-container">
+                    <h2><i class="fas fa-robot"></i> Inteligência Artificial</h2>
+                    <p>Sistema avançado de IA para laboratório químico</p>
+                    
+                    <div class="ia-tools">
+                        <!-- Chatbot IA -->
+                        <div class="ia-tool-card">
+                            <h3><i class="fas fa-comments"></i> Assistente Virtual</h3>
+                            <div class="chatbot-container">
+                                <div class="chat-header">
+                                    <i class="fas fa-robot"></i> QAT Assistant
+                                </div>
+                                <div class="chat-messages" id="chatMessages">
+                                    <div class="message bot">
+                                        <div class="message-content">
+                                            Olá! Sou o assistente virtual do QAT LAB. Como posso ajudá-lo hoje?
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chat-input">
+                                    <input type="text" id="chatInput" placeholder="Digite sua pergunta...">
+                                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Webcam e Identificação -->
+                        <div class="ia-tool-card">
+                            <h3><i class="fas fa-camera"></i> Identificação de Objetos</h3>
+                            <div class="webcam-container">
+                                <div class="webcam-header">
+                                    <i class="fas fa-eye"></i> Análise Visual
+                                </div>
+                                <div class="webcam-content">
+                                    <div class="webcam-preview" id="webcamPreview">
+                                        <div>
+                                            <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                            <p>Clique em "Iniciar Câmera" para começar</p>
+                                        </div>
+                                    </div>
+                                    <div class="webcam-controls">
+                                        <button class="btn-webcam" onclick="startWebcam()"><i class="fas fa-play"></i> Iniciar Câmera</button>
+                                        <button class="btn-webcam stop" onclick="stopWebcam()" style="display: none;"><i class="fas fa-stop"></i> Parar</button>
+                                        <button class="btn-webcam" onclick="captureImage()"><i class="fas fa-camera"></i> Capturar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- APIs Externas -->
+                        <div class="ia-tool-card">
+                            <h3><i class="fas fa-link"></i> APIs Externas</h3>
+                            <div class="api-links">
+                                <button class="btn btn-primary" onclick="window.open('https://chempy.readthedocs.io/', '_blank')">
+                                    <i class="fas fa-book"></i> ChemPy Docs
+                                </button>
+                                <button class="btn btn-primary" onclick="window.open('http://www.chemspider.com/', '_blank')">
+                                    <i class="fas fa-search"></i> ChemSpider
+                                </button>
+                                <button class="btn btn-primary" onclick="window.open('https://link.springer.com/', '_blank')">
+                                    <i class="fas fa-graduation-cap"></i> SpringerLink
+                                </button>
+                                <button class="btn btn-primary" onclick="window.open('https://chat.openai.com/', '_blank')">
+                                    <i class="fas fa-robot"></i> ChatGPT
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Upload para IA -->
+                        <div class="ia-tool-card">
+                            <h3><i class="fas fa-brain"></i> Análise de Documentos</h3>
+                            <div class="upload-container">
+                                <div class="upload-area" onclick="document.getElementById('iaFileInput').click()">
+                                    <i class="fas fa-file-upload"></i>
+                                    <h4>Upload para Análise IA</h4>
+                                    <p>Envie documentos para análise inteligente</p>
+                                </div>
+                                <input type="file" id="iaFileInput" class="file-input" multiple accept=".pdf,.doc,.docx,.txt">
+                                <div id="iaUploadedFiles" class="uploaded-files"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outras páginas existentes... -->
+            <div id="dashboard-page" class="page">
+                <div class="dashboard-container">
+                    <h2>Dashboard do Laboratório</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-flask"></i>
+                            <div class="stat-info">
+                                <h3 id="total-substancias">0</h3>
+                                <p>Substâncias Cadastradas</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-tools"></i>
+                            <div class="stat-info">
+                                <h3 id="total-equipamentos">0</h3>
+                                <p>Equipamentos Ativos</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-project-diagram"></i>
+                            <div class="stat-info">
+                                <h3 id="total-projetos">0</h3>
+                                <p>Projetos em Andamento</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-boxes"></i>
+                            <div class="stat-info">
+                                <h3 id="total-estoque">0</h3>
+                                <p>Itens em Estoque</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="substancias-page" class="page">
+                <div class="container">
+                    <h1>Gerenciamento de Substâncias Químicas</h1>
+                    <div class="form-container">
+                        <h2>Cadastrar Nova Substância</h2>
+                        <form id="substancia-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nome">Nome da Substância:</label>
+                                    <input type="text" id="nome" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="formula">Fórmula Química:</label>
+                                    <input type="text" id="formula" name="formula" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="massa_molar">Massa Molar (g/mol):</label>
+                                    <input type="number" id="massa_molar" name="massa_molar" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="densidade">Densidade (g/cm³):</label>
+                                    <input type="number" id="densidade" name="densidade" step="0.01">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ponto_fusao">Ponto de Fusão (°C):</label>
+                                    <input type="number" id="ponto_fusao" name="ponto_fusao" step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ponto_ebulicao">Ponto de Ebulição (°C):</label>
+                                    <input type="number" id="ponto_ebulicao" name="ponto_ebulicao" step="0.1">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="descricao">Descrição:</label>
+                                <textarea id="descricao" name="descricao" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Adicionar Substância</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearSubstanciaForm()">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <h3>Substâncias Cadastradas</h3>
+                        <table id="substancias-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Fórmula</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="calculadora-page" class="page">
+                <div class="calculadora-container">
+                    <h2>Calculadora Química</h2>
+                    <div class="calculator-tabs">
+                        <button class="tab-btn active" onclick="showCalculator('molar')">Massa Molar</button>
+                        <button class="tab-btn" onclick="showCalculator('concentracao')">Concentração</button>
+                        <button class="tab-btn" onclick="showCalculator('ph')">pH</button>
+                        <button class="tab-btn" onclick="showCalculator('gases')">Gases Ideais</button>
+                    </div>
+                    <div id="molar-calc" class="calculator-panel active">
+                        <h3>Cálculo de Massa Molar</h3>
+                        <div class="calc-form">
+                            <div class="form-group">
+                                <label for="formula-molar">Fórmula Química:</label>
+                                <input type="text" id="formula-molar" placeholder="Ex: H2SO4">
+                            </div>
+                            <button onclick="calcularMassaMolar()" class="btn btn-primary">Calcular</button>
+                            <div id="resultado-molar" class="resultado"></div>
+                        </div>
+                    </div>
+                    <div id="concentracao-calc" class="calculator-panel">
+                        <h3>Cálculo de Concentração</h3>
+                        <div class="calc-form">
+                            <div class="form-group">
+                                <label for="massa-soluto">Massa do Soluto (g):</label>
+                                <input type="number" id="massa-soluto" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="volume-solucao">Volume da Solução (L):</label>
+                                <input type="number" id="volume-solucao" step="0.01">
+                            </div>
+                            <button onclick="calcularConcentracao()" class="btn btn-primary">Calcular</button>
+                            <div id="resultado-concentracao" class="resultado"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="ph-calc" class="calculator-panel">
+                        <h3>Cálculo de pH</h3>
+                        <div class="calc-form">
+                            <div class="form-group">
+                                <label for="concentracao-h">Concentração de H+ (mol/L):</label>
+                                <input type="number" id="concentracao-h" step="0.000001">
+                            </div>
+                            <button onclick="calcularPH()" class="btn btn-primary">Calcular</button>
+                            <div id="resultado-ph" class="resultado"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="gases-calc" class="calculator-panel">
+                        <h3>Lei dos Gases Ideais (PV = nRT)</h3>
+                        <div class="calc-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pressao">Pressão (atm):</label>
+                                    <input type="number" id="pressao" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="volume">Volume (L):</label>
+                                    <input type="number" id="volume" step="0.01">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="mols">Número de mols:</label>
+                                    <input type="number" id="mols" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="temperatura">Temperatura (K):</label>
+                                    <input type="number" id="temperatura" step="0.1">
+                                </div>
+                            </div>
+                            <button onclick="calcularGasesIdeais()" class="btn btn-primary">Calcular</button>
+                            <div id="resultado-gases" class="resultado"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="equipamentos-page" class="page">
+                <div class="container">
+                    <h1>Gerenciamento de Equipamentos</h1>
+                    
+                    <div class="form-container">
+                        <h2>Cadastrar Equipamento</h2>
+                        <form id="equipamento-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eq-nome">Nome do Equipamento:</label>
+                                    <input type="text" id="eq-nome" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eq-tipo">Tipo:</label>
+                                    <select id="eq-tipo" name="tipo" required>
+                                        <option value="">Selecione o tipo</option>
+                                        <option value="Balança">Balança</option>
+                                        <option value="Microscópio">Microscópio</option>
+                                        <option value="Centrífuga">Centrífuga</option>
+                                        <option value="Espectrofotômetro">Espectrofotômetro</option>
+                                        <option value="Autoclave">Autoclave</option>
+                                        <option value="Estufa">Estufa</option>
+                                        <option value="Agitador">Agitador</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eq-fabricante">Fabricante:</label>
+                                    <input type="text" id="eq-fabricante" name="fabricante">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eq-modelo">Modelo:</label>
+                                    <input type="text" id="eq-modelo" name="modelo">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eq-numero-serie">Número de Série:</label>
+                                    <input type="text" id="eq-numero-serie" name="numero_serie">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eq-status">Status:</label>
+                                    <select id="eq-status" name="status" required>
+                                        <option value="Operacional">Operacional</option>
+                                        <option value="Manutenção">Em Manutenção</option>
+                                        <option value="Inoperante">Inoperante</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eq-data-aquisicao">Data de Aquisição:</label>
+                                    <input type="date" id="eq-data-aquisicao" name="data_aquisicao">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eq-localizacao">Localização:</label>
+                                    <input type="text" id="eq-localizacao" name="localizacao">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="eq-observacoes">Observações:</label>
+                                <textarea id="eq-observacoes" name="observacoes" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Adicionar Equipamento</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearEquipamentoForm()">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="form-container">
+                        <h2>Registrar Manutenção</h2>
+                        <form id="manutencao-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="man-equipamento">Equipamento:</label>
+                                    <select id="man-equipamento" name="equipamento_id" required>
+                                        <option value="">Selecione o equipamento</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="man-tipo">Tipo de Manutenção:</label>
+                                    <select id="man-tipo" name="tipo" required>
+                                        <option value="">Selecione o tipo</option>
+                                        <option value="Preventiva">Preventiva</option>
+                                        <option value="Corretiva">Corretiva</option>
+                                        <option value="Calibração">Calibração</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="man-data">Data da Manutenção:</label>
+                                    <input type="date" id="man-data" name="data" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="man-responsavel">Responsável:</label>
+                                    <input type="text" id="man-responsavel" name="responsavel" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="man-descricao">Descrição da Manutenção:</label>
+                                <textarea id="man-descricao" name="descricao" rows="3" required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Registrar Manutenção</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearManutencaoForm()">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="export-section">
+                        <h2>Exportação e Gráficos</h2>
+                        <div class="export-buttons">
+                            <button class="btn btn-success" onclick="exportEquipamentosPDF()">Exportar PDF</button>
+                            <button class="btn btn-info" onclick="exportEquipamentosCSV()">Exportar CSV</button>
+                        </div>
+                        <div class="chart-buttons">
+                            <button class="btn btn-primary" onclick="showEquipamentosChart('bar')">Gráfico de Barras</button>
+                            <button class="btn btn-primary" onclick="showEquipamentosChart('pie')">Gráfico de Pizza</button>
+                            <button class="btn btn-primary" onclick="showEquipamentosChart('line')">Gráfico de Linha</button>
+                            <button class="btn btn-warning" onclick="openPowerBIDashboard()">Dashboard Power BI</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Equipamentos Cadastrados</h2>
+                            <div class="table-actions">
+                                <input type="text" id="search-equipamentos" placeholder="Buscar equipamentos..." onkeyup="filterEquipamentos()">
+                                <select id="filter-status" onchange="filterEquipamentos()">
+                                    <option value="">Todos os Status</option>
+                                    <option value="Operacional">Operacional</option>
+                                    <option value="Manutenção">Em Manutenção</option>
+                                    <option value="Inoperante">Inoperante</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table id="equipamentos-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Fabricante</th>
+                                    <th>Modelo</th>
+                                    <th>Status</th>
+                                    <th>Localização</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="equipamentos-tbody">
+                                <!-- Dados serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Modal para Gráficos -->
+                    <div id="chart-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeChartModal()">&times;</span>
+                            <h2 id="chart-title">Gráfico de Equipamentos</h2>
+                            <canvas id="equipamentos-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="projetos-page" class="page">
+                <div class="projetos-container">
+                    <h2>Gerenciamento de Projetos</h2>
+                    <div class="form-container">
+                        <h3>Adicionar Novo Projeto</h3>
+                        <form id="projeto-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="proj-nome">Nome do Projeto:</label>
+                                    <input type="text" id="proj-nome" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="proj-responsavel">Responsável:</label>
+                                    <input type="text" id="proj-responsavel" name="responsavel" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="proj-data-inicio">Data de Início:</label>
+                                    <input type="date" id="proj-data-inicio" name="data_inicio" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="proj-data-fim">Data de Término:</label>
+                                    <input type="date" id="proj-data-fim" name="data_fim">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="proj-descricao">Descrição:</label>
+                                <textarea id="proj-descricao" name="descricao" rows="3" required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Adicionar Projeto</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearProjetoForm()">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <h3>Projetos Cadastrados</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-success" onclick="exportProjetosPDF()">Exportar PDF</button>
+                        </div>
+                        <table id="projetos-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Responsável</th>
+                                    <th>Data Início</th>
+                                    <th>Data Término</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projetos-tbody">
+                                <!-- Dados serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="estoque-page" class="page">
+                <div class="estoque-container">
+                    <h2>Controle de Estoque</h2>
+                    <div class="form-container">
+                        <h3>Adicionar Item ao Estoque</h3>
+                        <form id="estoque-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="est-nome">Nome do Item:</label>
+                                    <input type="text" id="est-nome" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="est-categoria">Categoria:</label>
+                                    <select id="est-categoria" name="categoria" required>
+                                        <option value="">Selecione a categoria</option>
+                                        <option value="Reagente">Reagente</option>
+                                        <option value="Vidraria">Vidraria</option>
+                                        <option value="Equipamento">Equipamento</option>
+                                        <option value="Consumível">Consumível</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="est-quantidade">Quantidade:</label>
+                                    <input type="number" id="est-quantidade" name="quantidade" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="est-unidade">Unidade:</label>
+                                    <select id="est-unidade" name="unidade" required>
+                                        <option value="">Selecione a unidade</option>
+                                        <option value="g">Gramas (g)</option>
+                                        <option value="kg">Quilogramas (kg)</option>
+                                        <option value="mL">Mililitros (mL)</option>
+                                        <option value="L">Litros (L)</option>
+                                        <option value="unidade">Unidade</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Adicionar ao Estoque</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearEstoqueForm()">Limpar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <h3>Itens em Estoque</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-success" onclick="exportEstoquePDF()">Exportar PDF</button>
+                        </div>
+                        <table id="estoque-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Quantidade</th>
+                                    <th>Unidade</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="estoque-tbody">
+                                <!-- Dados serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ia-page" class="page">
+                <div class="ia-container">
+                    <h2>Inteligência Artificial</h2>
+                    <div class="ia-tabs">
+                        <button class="tab-btn active" onclick="showIATab('chatbot')">Chatbot</button>
+                        <button class="tab-btn" onclick="showIATab('detector')">Detector de Objetos</button>
+                    </div>
+                    
+                    <div id="chatbot-tab" class="ia-panel active">
+                        <div class="chatbot-container">
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="message bot-message">
+                                    <div class="message-content">
+                                        Olá! Sou seu assistente de laboratório. Como posso ajudá-lo hoje?
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-input-container">
+                                <input type="text" id="chat-input" placeholder="Digite sua pergunta..." onkeypress="handleChatKeyPress(event)">
+                                <button onclick="sendMessage()" class="btn btn-primary">Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="detector-tab" class="ia-panel">
+                        <div class="detector-container">
+                            <h3>Detector de Objetos com IA</h3>
+                            <div class="video-container">
+                                <video id="video" width="640" height="480" autoplay></video>
+                                <canvas id="canvas" width="640" height="480"></canvas>
+                            </div>
+                            <div class="detector-controls">
+                                <button onclick="startDetection()" class="btn btn-primary">Iniciar Detecção</button>
+                                <button onclick="stopDetection()" class="btn btn-danger">Parar Detecção</button>
+                            </div>
+                            <div id="detection-results" class="detection-results">
+                                <!-- Resultados da detecção serão exibidos aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notificações -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/equipamentos.js"></script>
+    <script src="js/substancias.js"></script>
+    <script src="js/projetos.js"></script>
+</body>
+</html>

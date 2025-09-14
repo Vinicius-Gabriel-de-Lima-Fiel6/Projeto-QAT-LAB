@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QAT LAB - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="../imagens/logo_uea.png" alt="Logo UEA" class="logo">
+                <h1>QAT LAB - Dashboard Principal</h1>
+            </div>
+        </header>
+        
+        <div class="background-image"></div>
+        
+        <nav class="navigation">
+            <div class="nav-grid">
+                <button class="nav-button" onclick="openModule('calculadora')">
+                    <i class="icon-calculator"></i>
+                    <span>Calculadora Química</span>
+                </button>
+                <button class="nav-button" onclick="openModule('equipamentos')">
+                    <i class="icon-equipment"></i>
+                    <span>Controle de Equipamentos</span>
+                </button>
+                <button class="nav-button" onclick="openModule('substancias')">
+                    <i class="icon-substance"></i>
+                    <span>Substâncias</span>
+                </button>
+                <button class="nav-button" onclick="openModule('projetos')">
+                    <i class="icon-project"></i>
+                    <span>Projetos</span>
+                </button>
+                <button class="nav-button" onclick="openModule('estoque')">
+                    <i class="icon-inventory"></i>
+                    <span>Controle de Estoque</span>
+                </button>
+                <button class="nav-button" onclick="openModule('ia')">
+                    <i class="icon-ai"></i>
+                    <span>Assistente IA</span>
+                </button>
+                <button class="nav-button" onclick="openModule('graficos')">
+                    <i class="icon-chart"></i>
+                    <span>Gráficos Científicos</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+    
+    <script src="dashboard.js"></script>
+</body>
+</html>
+<div class="stats-grid">
+    <div class="stat-card">
+        <i class="fas fa-flask"></i>
+        <div class="stat-info">
+            <h3 id="total-substancias">0</h3>
+            <p>Substâncias Cadastradas</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-tools"></i>
+        <div class="stat-info">
+            <h3 id="total-equipamentos">0</h3>
+            <p>Equipamentos Ativos</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-project-diagram"></i>
+        <div class="stat-info">
+            <h3 id="total-projetos">0</h3>
+            <p>Projetos em Andamento</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-boxes"></i>
+        <div class="stat-info">
+            <h3 id="total-estoque">0</h3>
+            <p>Itens em Estoque</p>
+        </div>
+    </div>
+</div>
+
+<div class="charts-container">
+    <div class="chart-card">
+        <h3>Uso de Equipamentos</h3>
+        <canvas id="equipmentChart"></canvas>
+    </div>
+    <div class="chart-card">
+        <h3>Projetos por Status</h3>
+        <canvas id="projectsChart"></canvas>
+    </div>
+</div>
+
+<div class="recent-activities">
+    <h3>Atividades Recentes</h3>
+    <div id="activities-list" class="activities-list">
+        <!-- Atividades serão carregadas dinamicamente -->
+    </div>
+</div>

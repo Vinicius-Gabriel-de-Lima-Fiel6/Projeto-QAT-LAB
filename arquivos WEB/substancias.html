@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substâncias - QAT LAB</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/equipamentos.css">
+</head>
+<body>
+    <div class="substancias-container">
+        <header class="header">
+            <button class="back-button" onclick="goBack()">← Voltar</button>
+            <h1>Gerenciamento de Substâncias</h1>
+        </header>
+        
+        <div class="form-container">
+            <div class="form-section">
+                <h2>Adicionar Nova Substância</h2>
+                <form id="substancia-form">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="nome">Nome:</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="formula">Fórmula Química:</label>
+                            <input type="text" id="formula" name="formula" required>
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="massa-molar">Massa Molar (g/mol):</label>
+                            <input type="number" id="massa-molar" name="massa-molar" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="densidade">Densidade (g/cm³):</label>
+                            <input type="number" id="densidade" name="densidade" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="ponto-fusao">Ponto de Fusão (°C):</label>
+                            <input type="number" id="ponto-fusao" name="ponto-fusao" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="ponto-ebulicao">Ponto de Ebulição (°C):</label>
+                            <input type="number" id="ponto-ebulicao" name="ponto-ebulicao" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição:</label>
+                        <textarea id="descricao" name="descricao" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">Adicionar Substância</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h2>Substâncias Cadastradas</h2>
+                <div class="table-controls">
+                    <input type="text" id="search-substancias" placeholder="Buscar substâncias...">
+                    <button onclick="exportSubstanciasPDF()" class="action-btn">Exportar PDF</button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="substancias-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Fórmula</th>
+                            <th>Massa Molar</th>
+                            <th>Densidade</th>
+                            <th>P. Fusão</th>
+                            <th>P. Ebulição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados serão carregados dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/substancias.js"></script>
+</body>
+</html>
